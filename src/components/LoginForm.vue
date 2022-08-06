@@ -70,14 +70,15 @@ export default {
         await this.authenticate(values);
       } catch (error) {
         this.login_in_submission = false;
-        this.reg_alert_variant = "bg-red-500";
-        this.reg_alert_msg = "Invalid login details. Please try again.";
+        this.login_alert_variant = "bg-red-500";
+        this.login_alert_msg = "Invalid login details. Please try again.";
+        console.log(error);
         return;
       }
 
       this.login_alert_variant = "bg-green-500";
       this.login_alert_msg = "Success! You are now logged in.";
-      console.log(values);
+      window.location.reload();
     },
   },
 };

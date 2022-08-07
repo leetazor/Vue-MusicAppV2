@@ -1,6 +1,7 @@
 import { createRouter, createWebHistory } from "vue-router";
 import HomeView from "../views/HomeView.vue";
 import ManageView from "../views/ManageView.vue";
+import SingleSong from "../views/SingleSong.vue";
 import useUserStore from "@/stores/user";
 
 const routes = [
@@ -33,6 +34,11 @@ const routes = [
   {
     path: "/manage",
     redirect: { name: "manage" },
+  },
+  {
+    name: "song",
+    path: "/song/:id",
+    component: SingleSong,
   },
   {
     path: "/:catchAll(.*)*",

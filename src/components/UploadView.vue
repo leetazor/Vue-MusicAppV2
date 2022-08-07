@@ -49,6 +49,12 @@ export default {
       uploads: [],
     };
   },
+  props: {
+    addSong: {
+      type: Function,
+      required: true,
+    },
+  },
   methods: {
     upload($event) {
       this.is_dragover = false;
@@ -81,8 +87,6 @@ export default {
             text_class: "",
           }) - 1;
 
-        let uploadDate = new Date();
-
         task.on(
           "state_changed",
           (snapshot) => {
@@ -104,11 +108,14 @@ export default {
               modified_name: file.name,
               genre: "",
               comment_count: 0,
-              uploaded: uploadDate,
+              uploaded: new Date().toString(),
             };
 
             song.url = await task.snapshot.ref.getDownloadURL();
-            await songsCollection.add(song);
+            const songRef = await songsCollection.add(song);
+            const songSnapshot = await songRef.get();
+
+            this.addSong(songSnapshot);
 
             this.uploads[uploadIndex].variant = "bg-green-400";
             this.uploads[uploadIndex].icon = "fas fa-check";

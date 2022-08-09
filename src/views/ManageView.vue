@@ -9,11 +9,14 @@
         <div
           class="bg-white rounded border border-gray-200 relative flex flex-col"
         >
-          <div class="px-6 pt-6 pb-5 font-bold border-b border-gray-200">
+          <div
+            class="px-6 pt-6 pb-5 font-bold border-b border-gray-200"
+            v-icon-secondary="{ icon: 'compact-disc', right: true }"
+          >
             <span class="card-title">My Songs</span>
-            <i
+            <!-- <i
               class="fa fa-compact-disc float-right text-green-400 text-2xl"
-            ></i>
+            ></i> -->
           </div>
           <div class="p-6">
             <!-- Composition Items -->
@@ -38,6 +41,7 @@
 import UploadView from "@/components/UploadView.vue";
 import CompositionItem from "@/components/CompositionItem.vue";
 import { songsCollection, auth } from "@/includes/firebase/firebase";
+import IconSecondary from "@/directives/icon-secondary";
 
 export default {
   name: "ManageView",
@@ -50,6 +54,9 @@ export default {
   components: {
     UploadView,
     CompositionItem,
+  },
+  directives: {
+    "icon-secondary": IconSecondary,
   },
   methods: {
     updateSong(i, values) {

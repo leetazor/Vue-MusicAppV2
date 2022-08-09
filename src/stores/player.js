@@ -10,6 +10,14 @@ export default defineStore("player", {
     duration: "00:00",
     playerProgress: "0%",
   }),
+  getters: {
+    playing: (state) => {
+      if (state.sound.playing) {
+        return state.sound.playing();
+      }
+      return false;
+    },
+  },
   actions: {
     async playNewSong(song) {
       if (this.sound instanceof Howl) {
@@ -81,14 +89,6 @@ export default defineStore("player", {
       // Howler will emit this event when the audio has oficially changed position
       // we're using 'progress' function as a callback, to keep the visual of the song playing on the player
       this.sound.once("seek", this.progress);
-    },
-  },
-  getters: {
-    playing: (state) => {
-      if (state.sound.playing) {
-        return state.sound.playing();
-      }
-      return false;
     },
   },
 });

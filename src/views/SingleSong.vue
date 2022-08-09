@@ -1,91 +1,107 @@
 <template>
-  <!-- Music Header -->
-  <section class="w-full mb-8 py-14 text-center text-white relative">
-    <div
-      class="absolute inset-0 w-full h-full box-border bg-contain music-bg"
-      style="background-image: url(/assets/img/song-header.png)"
-    ></div>
-    <div class="container mx-auto flex items-center">
-      <!-- Play/Pause Button -->
-      <button
-        @click.prevent="playNewSong(song)"
-        type="button"
-        class="z-50 h-24 w-24 text-3xl bg-white text-black rounded-full focus:outline-none"
-      >
-        <i class="fas fa-play"></i>
-      </button>
-      <div class="z-50 text-left ml-8">
-        <!-- Song Info -->
-        <div class="text-3xl font-bold">{{ song.modified_name }}</div>
-        <div>{{ song.genre }}</div>
-      </div>
-    </div>
-  </section>
-  <!-- Form -->
-  <section class="container mx-auto mt-6">
-    <div class="bg-white rounded border border-gray-200 relative flex flex-col">
-      <div class="px-6 pt-6 pb-5 font-bold border-b border-gray-200">
-        <!-- Comment Count -->
-        <span class="card-title">Comments ({{ song.comment_count }})</span>
-        <i class="fa fa-comments float-right text-green-400 text-2xl"></i>
-      </div>
-      <div class="p-6">
-        <div
-          class="text-white text-center font-bold p-4 mb-4"
-          v-if="show_alert"
-          :class="alert_variant"
+  <main>
+    <!-- Music Header -->
+    <section class="w-full mb-8 py-14 text-center text-white relative">
+      <div
+        class="absolute inset-0 w-full h-full box-border bg-contain music-bg"
+        style="background-image: url(/assets/img/song-header.png)"
+      ></div>
+      <div class="container mx-auto flex items-center">
+        <!-- Play/Pause Button -->
+        <button
+          v-if="!song_playing"
+          @click.prevent="startPlayingSong"
+          type="button"
+          class="z-50 h-24 w-24 text-3xl bg-white text-black rounded-full focus:outline-none"
         >
-          {{ alert_msg }}
+          <i class="fas fa-play"></i>
+        </button>
+        <button
+          v-else
+          @click.prevent="toggleAudio"
+          type="button"
+          class="z-50 h-24 w-24 text-3xl bg-white text-black rounded-full focus:outline-none"
+        >
+          <i
+            class="fas"
+            :class="{ 'fa-play': !playing, 'fa-pause': playing }"
+          ></i>
+        </button>
+        <div class="z-50 text-left ml-8">
+          <!-- Song Info -->
+          <div class="text-3xl font-bold">{{ song.modified_name }}</div>
+          <div>{{ song.genre }}</div>
         </div>
-        <VeeForm
-          :validation-schema="schema"
-          @submit="addComment"
-          v-if="userLoggedIn"
-        >
-          <VeeField
-            as="textarea"
-            name="comment"
-            class="block w-full py-1.5 px-3 text-gray-800 border border-gray-300 transition duration-500 focus:outline-none focus:border-black rounded mb-4"
-            placeholder="Your comment here..."
-          ></VeeField>
-          <ErrorMessage class="text-red-600" name="comment" />
-          <button
-            type="submit"
-            class="py-1.5 px-3 rounded text-white bg-green-600 block"
-            :disabled="in_submission"
+      </div>
+    </section>
+    <!-- Form -->
+    <section class="container mx-auto mt-6" id="comments">
+      <div
+        class="bg-white rounded border border-gray-200 relative flex flex-col"
+      >
+        <div class="px-6 pt-6 pb-5 font-bold border-b border-gray-200">
+          <!-- Comment Count -->
+          <span class="card-title">Comments ({{ song.comment_count }})</span>
+          <i class="fa fa-comments float-right text-green-400 text-2xl"></i>
+        </div>
+        <div class="p-6">
+          <div
+            class="text-white text-center font-bold p-4 mb-4"
+            v-if="show_alert"
+            :class="alert_variant"
           >
-            Submit
-          </button>
-        </VeeForm>
-        <!-- Sort Comments -->
-        <select
-          v-model="sort"
-          class="block mt-4 py-1.5 px-3 text-gray-800 border border-gray-300 transition duration-500 focus:outline-none focus:border-black rounded"
-        >
-          <option value="1">Newest First</option>
-          <option value="2">Oldest First</option>
-        </select>
+            {{ alert_msg }}
+          </div>
+          <VeeForm
+            :validation-schema="schema"
+            @submit="addComment"
+            v-if="userLoggedIn"
+          >
+            <VeeField
+              as="textarea"
+              name="comment"
+              class="block w-full py-1.5 px-3 text-gray-800 border border-gray-300 transition duration-500 focus:outline-none focus:border-black rounded mb-4"
+              placeholder="Your comment here..."
+            ></VeeField>
+            <ErrorMessage class="text-red-600" name="comment" />
+            <button
+              type="submit"
+              class="py-1.5 px-3 rounded text-white bg-green-600 block"
+              :disabled="in_submission"
+            >
+              Submit
+            </button>
+          </VeeForm>
+          <!-- Sort Comments -->
+          <select
+            v-model="sort"
+            class="block mt-4 py-1.5 px-3 text-gray-800 border border-gray-300 transition duration-500 focus:outline-none focus:border-black rounded"
+          >
+            <option value="1">Newest First</option>
+            <option value="2">Oldest First</option>
+          </select>
+        </div>
       </div>
-    </div>
-  </section>
-  <!-- Comments -->
-  <ul class="container mx-auto">
-    <li
-      class="p-6 bg-gray-50 border border-gray-200"
-      v-for="comment in sortedComments"
-      :key="comment.docID"
-    >
-      <!-- Comment Author -->
-      <div class="mb-5">
-        <div class="font-bold">{{ comment.name }}</div>
-        <time>{{ comment.datePosted }}</time>
-      </div>
+    </section>
+    <!-- Comments -->
+    <ul class="container mx-auto">
+      <li
+        class="p-6 bg-gray-50 border border-gray-200"
+        v-for="comment in sortedComments"
+        :key="comment.docID"
+      >
+        <!-- Comment Author -->
+        <div class="mb-5">
+          <div class="font-bold">{{ comment.name }}</div>
+          <time>{{ comment.datePosted }}</time>
+        </div>
 
-      <p>
-        {{ comment.content }}
-      </p>
-    </li>
-  </ul>
+        <p>
+          {{ comment.content }}
+        </p>
+      </li>
+    </ul>
+  </main>
 </template>
 
 <script>
@@ -104,6 +120,7 @@ export default {
     return {
       song: {},
       comments: [],
+      song_playing: false,
       schema: {
         comment: "required|min:3",
       },
@@ -124,9 +141,10 @@ export default {
         return new Date(a.datePosted) - new Date(b.datePosted);
       });
     },
+    ...mapState(usePlayerStore, ["playing"]),
   },
   methods: {
-    ...mapActions(usePlayerStore, ["playNewSong"]),
+    ...mapActions(usePlayerStore, ["playNewSong", "toggleAudio"]),
     async addComment(values, context) {
       let { resetForm } = context;
       this.in_submission = true;
@@ -170,6 +188,10 @@ export default {
           ...doc.data(),
         });
       });
+    },
+    async startPlayingSong() {
+      this.song_playing = true;
+      this.playNewSong(this.song);
     },
   },
   watch: {

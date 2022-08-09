@@ -3,10 +3,18 @@
   <AppHeader />
 
   <!-- Home -->
+
   <router-view></router-view>
 
+  <!-- Router with transitions -->
+  <!-- <router-view v-slot="{ Component }">
+    <transition name="fade" mode="out-in"
+      ><component :is="Component"></component
+    ></transition>
+  </router-view> -->
+
   <!-- Player -->
-  <MusicPlayer />
+  <MusicPlayer v-if="current_song.modified_name" />
 
   <!-- Auth Modal -->
   <AppAuth />
@@ -21,6 +29,9 @@ import { mapWritableState } from "pinia";
 import useUserStore from "@/stores/user";
 import { auth } from "./includes/firebase/firebase";
 
+import { mapState } from "pinia";
+import usePlayerStore from "@/stores/player";
+
 export default {
   name: "App",
   components: {
@@ -30,6 +41,7 @@ export default {
   },
   computed: {
     ...mapWritableState(useUserStore, ["userLoggedIn"]),
+    ...mapState(usePlayerStore, ["current_song"]),
   },
   created() {
     if (auth.currentUser) {
@@ -38,3 +50,18 @@ export default {
   },
 };
 </script>
+
+<style>
+.fade-enter-from {
+  opacity: 0;
+}
+
+.fade-enter-active {
+  transition: all 0.3s linear;
+}
+
+.fade-leave-to {
+  transition: all 0.3s linear;
+  opacity: 0;
+}
+</style>

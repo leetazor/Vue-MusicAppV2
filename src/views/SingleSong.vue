@@ -207,20 +207,32 @@ export default {
       });
     },
   },
-  async created() {
-    const docSnapshot = await songsCollection.doc(this.$route.params.id).get();
+  async beforeRouteEnter(to, from, next) {
+    // 'this' is not accessible with beforeRouteEnter() nav guard
+    // we're using the 'to' object, that holds the properties related
+    // to the current route being visited. it includes the route parameters
+    const docSnapshot = await songsCollection.doc(to.params.id).get();
 
-    if (!docSnapshot.exists) {
-      this.$router.push({ name: "home" });
-      return;
-    }
+    //we're calling the next() function here, because we need access to the component to load the rest of the data
+    // the next() function has an optional parameter we can pass in a callback function
+    // to run after the component has been loaded
 
-    const { sort } = this.$route.query;
+    // the arrow function can have one parameter called 'vm'
+    // at this point, the component has been loaded. We can access the component data
+    // via the 'vm' parameter. it a context to the component, we can treat it like the 'this' keyword
+    next((vm) => {
+      if (!docSnapshot.exists) {
+        vm.$router.push({ name: "home" });
+        return;
+      }
 
-    this.sort = sort === "1" || sort === "2" ? sort : "1";
+      const { sort } = vm.$route.query;
 
-    this.song = docSnapshot.data();
-    this.getComments();
+      vm.sort = sort === "1" || sort === "2" ? sort : "1";
+
+      vm.song = docSnapshot.data();
+      vm.getComments();
+    });
   },
 };
 </script>

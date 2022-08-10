@@ -1,8 +1,10 @@
 import { createRouter, createWebHistory } from "vue-router";
-import HomeView from "../views/HomeView.vue";
-import ManageView from "../views/ManageView.vue";
-import SingleSong from "../views/SingleSong.vue";
 import useUserStore from "@/stores/user";
+
+// if we are importing a module this way, the file will be made into a chunk during the build
+const HomeView = () => import("../views/HomeView.vue");
+const ManageView = () => import("../views/ManageView.vue");
+const SingleSong = () => import("../views/SingleSong.vue");
 
 const routes = [
   {

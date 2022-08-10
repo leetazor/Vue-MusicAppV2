@@ -4,11 +4,19 @@ import { createPinia } from "pinia";
 import App from "./App.vue";
 import router from "./router";
 import VeeValidatePlugin from "./includes/plugins/validation";
+import GlobalComponents from "./includes/plugins/_globals";
 import { auth } from "./includes/firebase/firebase";
 import Icon from "./directives/icon";
+import { registerSW } from "virtual:pwa-register";
+import progressBar from "./includes/plugins/progress-bar";
 
 import "./assets/base.css";
 import "./assets/main.css";
+import "nprogress/nprogress.css";
+
+registerSW({ immediate: true });
+
+progressBar(router);
 
 let app;
 
@@ -18,6 +26,7 @@ auth.onAuthStateChanged(() => {
     app.use(createPinia());
     app.use(router);
     app.use(VeeValidatePlugin);
+    app.use(GlobalComponents);
     app.directive("icon", Icon);
 
     app.mount("#app");

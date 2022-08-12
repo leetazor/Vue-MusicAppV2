@@ -6,7 +6,7 @@ import router from "./router";
 import VeeValidatePlugin from "./includes/plugins/validation";
 import GlobalComponents from "./includes/plugins/_globals";
 import { auth } from "./includes/firebase/firebase";
-import Icon from "./directives/icon";
+// import Icon from "./directives/icon";
 import { registerSW } from "virtual:pwa-register";
 import progressBar from "./includes/plugins/progress-bar";
 
@@ -27,8 +27,7 @@ auth.onAuthStateChanged(() => {
     app.use(router);
     app.use(VeeValidatePlugin);
     app.use(GlobalComponents);
-    app.directive("icon", Icon);
-
+    // app.directive("icon", Icon);
     app.mount("#app");
   }
 });

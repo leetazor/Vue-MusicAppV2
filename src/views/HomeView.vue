@@ -54,6 +54,8 @@
 <script>
 import { songsCollection } from "@/includes/firebase/firebase";
 import SongItem from "@/components/SongItem.vue";
+import Icon from "@/directives/icon";
+
 export default {
   name: "HomeView",
   data() {
@@ -65,6 +67,9 @@ export default {
   },
   components: {
     SongItem,
+  },
+  directives: {
+    icon: Icon,
   },
   methods: {
     async getSongs() {

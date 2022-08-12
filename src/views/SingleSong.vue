@@ -9,6 +9,7 @@
       <div class="container mx-auto flex items-center">
         <!-- Play/Pause Button -->
         <button
+          id="play-btn"
           v-if="!song_playing"
           @click.prevent="startPlayingSong"
           type="button"
